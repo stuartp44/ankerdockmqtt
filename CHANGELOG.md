@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.2](https://github.com/stuartp44/ankerdockmqtt/compare/v0.3.1...v0.3.2) (2026-10-11)
+
+
+### Bug Fixes
+
+* build draft releases from release commit ([dac92d6](https://github.com/stuartp44/ankerdockmqtt/commit/dac92d6b51ce2c3c81536b48db9b23e4eff1c8d1))
+* publish draft release without retargeting ([e5b51f4](https://github.com/stuartp44/ankerdockmqtt/commit/e5b51f4b89a8d5652a8d36e0cc5c501a1c48cc49))
+* stage release assets before publication ([8c79084](https://github.com/stuartp44/ankerdockmqtt/commit/8c79084b35b50175e2a3200b6130ea07fb66f158))
+
 ## [0.3.1](https://github.com/stuartp44/ankerdockmqtt/compare/v0.3.0...v0.3.1) (2026-10-11)
 
 
