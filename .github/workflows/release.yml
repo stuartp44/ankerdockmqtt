@@ -1,6 +1,12 @@
 name: Build and publish release
 
 on:
+  workflow_call:
+    inputs:
+      tag:
+        description: Existing stable version tag to build and publish
+        required: true
+        type: string
   push:
     tags:
       - "v*"
@@ -55,7 +61,7 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-      - name: Validate tag and set package version
+      - name: Validate tag and package version
         shell: bash
         env:
           RELEASE_TAG: ${{ inputs.tag || github.ref_name }}

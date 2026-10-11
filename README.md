@@ -107,13 +107,27 @@ npm run test:packages
 
 ### Releases and verified updates
 
-Stable releases are built and published by
-[`.github/workflows/release.yml`](.github/workflows/release.yml). Update the
-version in `package.json` and `package-lock.json` (for example, run
-`npm version 0.3.0 --no-git-tag-version` and commit the version bump), create
-and push a matching stable version tag (`v0.3.0`), and the workflow runs tests, builds Windows x64 and
-macOS x64/arm64 packages, signs a SHA-256 manifest, and creates a GitHub release.
-The workflow can also be run manually against an existing tag.
+[Release Please](.github/workflows/release-please.yml) runs on pushes to
+`main` and maintains a release PR using Conventional Commit messages:
+`fix:` for bug fixes, `feat:` for features, and `BREAKING CHANGE:` for breaking
+changes. The PR updates `package.json`, `package-lock.json`, `CHANGELOG.md`,
+and the [release manifest](.release-please-manifest.json). The manifest starts
+at the project's current version, `0.2.0`.
+
+Merge the release PR to create the version tag and GitHub release. Release
+Please then directly calls the [build workflow](.github/workflows/release.yml),
+which runs tests, builds Windows x64 and macOS x64/arm64 packages, signs their
+SHA-256 manifest, and attaches the packages and signature to that release.
+This direct call is necessary because tags created with `GITHUB_TOKEN` do not
+trigger another push workflow. No personal access token is required.
+Allow GitHub Actions to create pull requests in the repository's Actions
+settings.
+
+The GitHub release initially contains notes only; the updater cannot use it
+until all packages and the signed manifest have been attached. If a build or
+publication fails, run the build workflow manually against the existing tag
+to retry. Manual tag pushes remain supported, but their versions must match
+`package.json`.
 
 Before publishing the first release, create an Ed25519 update-signing key pair:
 
@@ -121,9 +135,11 @@ Before publishing the first release, create an Ed25519 update-signing key pair:
 npm run updates:keygen
 ```
 
-Create a GitHub Actions environment named `release`, restrict its deployment
-branches/tags to version tags, and require maintainer approval. Add the private
-key as an environment secret:
+Create a GitHub Actions environment named `release`, allow deployments from
+`main` (for Release Please's reusable workflow) and version tags matching `v*`
+(for manual/tag-triggered releases), and require maintainer approval. Every
+build checks out the specified version tag. Add the private key as an
+environment secret:
 
 ```sh
 gh secret set UPDATE_SIGNING_PRIVATE_KEY --env release < update-signing-private.pem
