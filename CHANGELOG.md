@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/stuartp44/ankerdockmqtt/compare/v0.4.1...v0.4.2) (2026-10-11)
+
+
+### Bug Fixes
+
+* separate draft releases from release PR generation ([5786cd2](https://github.com/stuartp44/ankerdockmqtt/commit/5786cd26da5218b70f6b7ad296df1a0327ebb825))
+
 ## [0.4.1](https://github.com/stuartp44/ankerdockmqtt/compare/v0.4.0...v0.4.1) (2026-10-11)
 
 
