@@ -126,9 +126,17 @@ token is required.
 Allow GitHub Actions to create pull requests in the repository's Actions
 settings.
 
-If a build fails, run the build workflow manually against the existing tag to
-retry. Manual tag pushes remain supported, but their versions must match
-`package.json`.
+Release creation and release PR generation run separately. When a merged PR
+creates a draft, the workflow only builds and publishes that release; it does
+not propose another version in the same run. Later pushes or manual runs can
+create a release PR for new Conventional Commits after the published tag.
+PR generation pauses while any draft release remains unpublished, so a
+missing draft tag cannot cause old commits to be released again.
+
+If a build fails before publishing the draft, run the build workflow manually
+with its version in `tag` and the release PR's merge commit in `source-ref`.
+For an existing tag, `source-ref` can be omitted. Manual tag pushes remain
+supported, but their versions must match `package.json`.
 
 Before publishing the first release, create an Ed25519 update-signing key pair:
 

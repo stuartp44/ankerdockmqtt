@@ -24,7 +24,7 @@ jobs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
-      - name: Create or update release PR
+      - name: Create draft from merged release PR
         id: release
         uses: googleapis/release-please-action@v5
         with:
@@ -32,6 +32,31 @@ jobs:
           target-branch: main
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+          skip-github-pull-request: true
+      - name: Check for unpublished releases
+        id: drafts
+        if: steps.release.outputs.release_created != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          DRAFT_TAGS="$(gh api --paginate "repos/$GH_REPO/releases" --jq '.[] | select(.draft) | .tag_name')"
+          if [[ -n "$DRAFT_TAGS" ]]; then
+            echo "::notice::Release PR generation is paused until draft releases are published: $DRAFT_TAGS"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Create or update release PR
+        if: steps.release.outputs.release_created != 'true' && steps.drafts.outputs.ready == 'true'
+        uses: googleapis/release-please-action@v5
+        with:
+          token: ${{ github.token }}
+          target-branch: main
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          skip-github-release: true
 
   build-release:
     needs: release-please
