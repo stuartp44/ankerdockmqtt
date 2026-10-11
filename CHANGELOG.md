@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/stuartp44/ankerdockmqtt/compare/v0.2.1...v0.2.2) (2026-10-11)
+
+
+### Bug Fixes
+
+* guard release test broker compatibility ([d741058](https://github.com/stuartp44/ankerdockmqtt/commit/d741058a5b867859beb83d0de11a3280cf71b334))
+
 ## [0.2.1](https://github.com/stuartp44/ankerdockmqtt/compare/v0.2.0...v0.2.1) (2026-10-11)
 
 
