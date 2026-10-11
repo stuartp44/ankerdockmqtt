@@ -38,7 +38,7 @@
     "node-hid": "^3.1.0"
   },
   "devDependencies": {
-    "aedes": "^1.2.0",
+    "aedes": "^0.51.3",
     "electron": "^44.7.0",
     "electron-builder": "^26.15.3",
     "playwright-core": "^1.64.0"
