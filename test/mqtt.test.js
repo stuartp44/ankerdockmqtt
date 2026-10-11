@@ -12,6 +12,12 @@ test("broker configuration fails explicitly for missing or unsupported URLs", ()
   assert.throws(() => connectBroker({ MQTT_URL: "http://localhost" }, "test"), /must use/);
 });
 
+test("Aedes test broker factory remains compatible with the integration tests", async t => {
+  const broker = createAedes();
+  t.after(() => new Promise(resolve => broker.close(resolve)));
+  assert.equal(typeof broker.handle, "function");
+});
+
 test("disconnected broker or lost acknowledgement fails rather than hanging or publishing online", async () => {
   await assert.rejects(publishSnapshot({ connected: false }, "test", {}), /disconnected/);
   const client = new EventEmitter();
