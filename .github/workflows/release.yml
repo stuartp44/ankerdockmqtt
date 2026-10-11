@@ -77,7 +77,7 @@ jobs:
           fi
       - run: npm ci
       - name: Build app package
-        run: npm run dist:${{ matrix.target }} -- --${{ matrix.arch }}
+        run: npm run dist:${{ matrix.target }} -- --${{ matrix.arch }} --publish never
       - uses: actions/upload-artifact@v4
         with:
           name: release-${{ matrix.id }}
