@@ -114,14 +114,15 @@ changes. The PR updates `package.json`, `package-lock.json`, `CHANGELOG.md`,
 and the [release manifest](.release-please-manifest.json). The manifest starts
 at the project's current version, `0.2.0`.
 
-Merge the release PR to create the version tag. Release Please does not publish
-a published GitHub release; it creates a draft release and directly calls the
+Merge the release PR to create a draft release. Release Please directly calls the
 [build workflow](.github/workflows/release.yml), which runs tests, builds
 Windows x64 and macOS x64/arm64 packages, signs their SHA-256 manifest, and
-attaches the packages and signature before publishing it. This direct call is
-necessary because tags created with `GITHUB_TOKEN` do not trigger another push
-workflow. Publishing only after the assets are ready supports GitHub's
-immutable releases. No personal access token is required.
+attaches the packages and signature before publishing it. The build checks out
+the release PR's merge commit because GitHub creates the version tag when the
+draft is published. This direct call is necessary because actions triggered
+with `GITHUB_TOKEN` do not start another workflow. Publishing only after the
+assets are ready supports GitHub's immutable releases. No personal access
+token is required.
 Allow GitHub Actions to create pull requests in the repository's Actions
 settings.
 

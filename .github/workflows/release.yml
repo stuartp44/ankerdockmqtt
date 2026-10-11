@@ -7,6 +7,10 @@ on:
         description: Existing stable version tag to build and publish
         required: true
         type: string
+      source-ref:
+        description: Commit to build before the draft release tag exists
+        required: false
+        type: string
   push:
     tags:
       - "v*"
@@ -15,6 +19,10 @@ on:
       tag:
         description: Existing version tag to build and publish (for example v0.3.0)
         required: true
+        type: string
+      source-ref:
+        description: Optional commit to build if the release tag does not exist yet
+        required: false
         type: string
 
 permissions:
@@ -26,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.tag || github.ref }}
+          ref: ${{ inputs.source-ref || inputs.tag || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
@@ -56,7 +64,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.tag || github.ref }}
+          ref: ${{ inputs.source-ref || inputs.tag || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
@@ -96,7 +104,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.tag || github.ref }}
+          ref: ${{ inputs.source-ref || inputs.tag || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
@@ -114,13 +122,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+          RELEASE_TARGET: ${{ inputs.source-ref || inputs.tag || github.ref }}
         run: |
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
             gh release upload "$RELEASE_TAG" \
               dist/*.exe dist/*.zip \
               dist/update-manifest.json dist/update-manifest.json.sig \
               --clobber
-            gh release edit "$RELEASE_TAG" --draft=false
+            gh release edit "$RELEASE_TAG" --target "$RELEASE_TARGET" --draft=false
           else
             gh release create "$RELEASE_TAG" \
               dist/*.exe dist/*.zip \
