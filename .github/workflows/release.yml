@@ -122,14 +122,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
-          RELEASE_TARGET: ${{ inputs.source-ref || inputs.tag || github.ref }}
         run: |
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
             gh release upload "$RELEASE_TAG" \
               dist/*.exe dist/*.zip \
               dist/update-manifest.json dist/update-manifest.json.sig \
               --clobber
-            gh release edit "$RELEASE_TAG" --target "$RELEASE_TARGET" --draft=false
+            gh release edit "$RELEASE_TAG" --draft=false
           else
             gh release create "$RELEASE_TAG" \
               dist/*.exe dist/*.zip \
