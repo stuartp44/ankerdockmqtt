@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.1](https://github.com/stuartp44/ankerdockmqtt/compare/v0.4.0...v0.4.1) (2026-10-11)
+
+
+### Bug Fixes
+
+* align updater with GitHub release asset names ([3c8f72d](https://github.com/stuartp44/ankerdockmqtt/commit/3c8f72df6bd664ed942cbd832801dc499f24fb82))
+* align updater with GitHub release asset names ([7dee192](https://github.com/stuartp44/ankerdockmqtt/commit/7dee19238b7585b20a1285efa2ac66f3b6b4b4a8))
+
 ## [0.4.0](https://github.com/stuartp44/ankerdockmqtt/compare/v0.3.2...v0.4.0) (2026-10-11)
 
 
