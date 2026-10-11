@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/stuartp44/ankerdockmqtt/compare/v0.2.2...v0.3.0) (2026-10-11)
+
+
+### Features
+
+* add public key for update signing ([92aaeb6](https://github.com/stuartp44/ankerdockmqtt/commit/92aaeb69ab664445ee25a1be759858b5928d7c4c))
+
 ## [0.2.2](https://github.com/stuartp44/ankerdockmqtt/compare/v0.2.1...v0.2.2) (2026-10-11)
 
 
