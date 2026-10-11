@@ -33,6 +33,11 @@ test("release signing produces a manifest matching the pinned public key", async
   const signature = await readFile(path.join(output, "update-manifest.json.sig"));
   const verified = verifyReleaseManifest(manifest, signature, publicKey, "v1.2.0");
   assert.equal(verified.assets.length, 3);
+  assert.deepEqual(verified.assets.map(asset => asset.name).sort(), [
+    "Dock.MQTT-1.2.0-arm64-mac.zip",
+    "Dock.MQTT-1.2.0-mac.zip",
+    "Dock.MQTT.Setup.1.2.0.exe",
+  ]);
 
   const otherKeys = generateKeyPairSync("ed25519");
   await assert.rejects(execFileAsync(process.execPath, [script, "v1.2.0", output], {

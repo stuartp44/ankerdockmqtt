@@ -31,7 +31,8 @@ function compareVersions(left, right) {
 }
 
 function releaseAsset(release, name) {
-  const asset = release.assets?.find(candidate => candidate.name === name);
+  const githubName = name.replaceAll(" ", ".");
+  const asset = release.assets?.find(candidate => candidate.name === name || candidate.name === githubName);
   if (!asset || typeof asset.browser_download_url !== "string") {
     throw new Error(`Release is missing ${name}`);
   }
@@ -87,12 +88,14 @@ export function verifyReleaseManifest(manifestBytes, signature, publicKey, expec
 }
 
 export function selectPlatformAsset(assets, version, platform, arch) {
-  let name;
-  if (platform === "win32" && arch === "x64") name = `Dock MQTT Setup ${version}.exe`;
-  else if (platform === "darwin" && arch === "x64") name = `Dock MQTT-${version}-mac.zip`;
-  else if (platform === "darwin" && arch === "arm64") name = `Dock MQTT-${version}-arm64-mac.zip`;
+  let legacyName;
+  if (platform === "win32" && arch === "x64") legacyName = `Dock MQTT Setup ${version}.exe`;
+  else if (platform === "darwin" && arch === "x64") legacyName = `Dock MQTT-${version}-mac.zip`;
+  else if (platform === "darwin" && arch === "arm64") legacyName = `Dock MQTT-${version}-arm64-mac.zip`;
   else throw new Error(`Automatic updates are not supported on ${platform}/${arch}`);
-  const asset = assets.find(candidate => candidate.name === name);
+  const githubName = legacyName.replaceAll(" ", ".");
+  const asset = assets.find(candidate => candidate.name === githubName)
+    ?? assets.find(candidate => candidate.name === legacyName);
   if (!asset) throw new Error(`Stable release is missing the package for ${platform}/${arch}`);
   return asset;
 }
