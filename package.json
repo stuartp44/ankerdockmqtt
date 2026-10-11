@@ -1,11 +1,20 @@
 {
   "name": "anker-dock-mqtt",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "main": "desktop/main.js",
   "description": "Read-only USB HID telemetry bridge to MQTT and Home Assistant for the Anker Prime Docking Station (14-in-1, Triple Display, DisplayLink), model A83B3",
-  "keywords": ["anker", "anker-prime", "a83b3", "docking-station", "mqtt", "home-assistant", "hid", "electron"],
+  "keywords": [
+    "anker",
+    "anker-prime",
+    "a83b3",
+    "docking-station",
+    "mqtt",
+    "home-assistant",
+    "hid",
+    "electron"
+  ],
   "author": "stuartp44",
   "license": "MIT",
   "engines": {
@@ -37,7 +46,9 @@
   "build": {
     "appId": "io.ankerdockmqtt.desktop",
     "productName": "Dock MQTT",
-    "directories": { "output": "dist" },
+    "directories": {
+      "output": "dist"
+    },
     "npmRebuild": false,
     "files": [
       "desktop/**/*",
@@ -46,10 +57,14 @@
       "LICENSE",
       "!node_modules/node-hid/build/**/*"
     ],
-    "asarUnpack": ["node_modules/node-hid/**/*"],
+    "asarUnpack": [
+      "node_modules/node-hid/**/*"
+    ],
     "afterPack": "build/after-pack.cjs",
     "mac": {
-      "target": ["zip"],
+      "target": [
+        "zip"
+      ],
       "category": "public.app-category.utilities",
       "extendInfo": {
         "LSUIElement": true,
@@ -57,7 +72,14 @@
       }
     },
     "win": {
-      "target": [{ "target": "nsis", "arch": ["x64"] }]
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
     },
     "nsis": {
       "oneClick": false,
