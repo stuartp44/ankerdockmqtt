@@ -1,0 +1,68 @@
+{
+  "name": "anker-dock-mqtt",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "main": "desktop/main.js",
+  "description": "Read-only USB HID telemetry bridge to MQTT and Home Assistant for the Anker Prime Docking Station (14-in-1, Triple Display, DisplayLink), model A83B3",
+  "keywords": ["anker", "anker-prime", "a83b3", "docking-station", "mqtt", "home-assistant", "hid", "electron"],
+  "author": "stuartp44",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node src/bridge.js",
+    "list": "node src/bridge.js --list",
+    "once": "node src/bridge.js --once",
+    "test": "node --test test/*.test.js",
+    "app": "electron .",
+    "test:desktop": "node test/desktop-smoke.js",
+    "test:packages": "node test/package-smoke.js",
+    "updates:keygen": "node scripts/generate-update-key.js",
+    "pack": "electron-builder --dir",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win"
+  },
+  "dependencies": {
+    "mqtt": "^5.10.4",
+    "node-hid": "^3.1.0"
+  },
+  "devDependencies": {
+    "aedes": "^0.51.3",
+    "electron": "^44.7.0",
+    "electron-builder": "^26.15.3",
+    "playwright-core": "^1.64.0"
+  },
+  "build": {
+    "appId": "io.ankerdockmqtt.desktop",
+    "productName": "Dock MQTT",
+    "directories": { "output": "dist" },
+    "npmRebuild": false,
+    "files": [
+      "desktop/**/*",
+      "src/**/*",
+      "package.json",
+      "LICENSE",
+      "!node_modules/node-hid/build/**/*"
+    ],
+    "asarUnpack": ["node_modules/node-hid/**/*"],
+    "afterPack": "build/after-pack.cjs",
+    "mac": {
+      "target": ["zip"],
+      "category": "public.app-category.utilities",
+      "extendInfo": {
+        "LSUIElement": true,
+        "NSLocalNetworkUsageDescription": "Dock MQTT connects to your MQTT broker on the local network to publish dock telemetry."
+      }
+    },
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

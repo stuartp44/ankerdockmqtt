@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>Dock MQTT</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="renderer.js" defer></script>
+</head>
+<body>
+  <header>
+    <div><h1>Dock MQTT</h1><p>Anker Prime A83B3 · Read-only USB telemetry</p></div>
+    <span id="status" role="status">Stopped</span>
+  </header>
+  <main>
+    <p class="notice">Quit Anker Dock Manager before starting. Keep DisplayLink Manager running. Closing this window keeps the app in your tray/menu bar.</p>
+    <p id="error" role="alert" hidden></p>
+    <section>
+      <h2>Broker settings</h2>
+      <form id="settings">
+        <fieldset id="fields">
+          <label class="wide">Broker URL<input name="brokerUrl" type="text" placeholder="mqtts://broker.example:8883" required></label>
+          <label>Username<input name="username" type="text" autocomplete="username"></label>
+          <label>Password<input name="password" type="password" autocomplete="new-password" placeholder="Optional"></label>
+          <label class="check wide"><input name="clearPassword" type="checkbox"> Clear saved password</label>
+          <label>Topic prefix<input name="topic" type="text" value="anker/dock" required></label>
+          <label>Client ID<input name="clientId" type="text" placeholder="Automatic"></label>
+          <label>Dock serial<input name="serial" type="text" placeholder="Automatic if only one dock"></label>
+          <label>Poll interval (seconds)<input name="interval" type="number" min="1" max="3600" step="1" value="10" required></label>
+          <label class="check wide"><input name="autoConnect" type="checkbox"> Connect automatically when this app opens</label>
+          <label class="check wide"><input name="autoUpdate" type="checkbox"> Automatically check for, download, and verify stable updates; ask before installing</label>
+          <label class="check wide"><input name="discoveryEnabled" type="checkbox" checked> Set up Home Assistant MQTT discovery automatically</label>
+          <label class="wide">Home Assistant discovery prefix<input name="discoveryPrefix" type="text" value="homeassistant" required></label>
+        </fieldset>
+        <label class="check login"><input id="startAtLogin" type="checkbox"> Start Dock MQTT when I log in (opens in the background)</label>
+        <p id="loginHint" class="muted" hidden></p>
+        <div class="actions">
+          <button id="save" type="submit">Save settings</button>
+          <button id="start" type="button">Start bridge</button>
+          <button id="stop" type="button" disabled>Stop bridge</button>
+          <button id="refresh" type="button">Find dock</button>
+        </div>
+      </form>
+      <p id="devices" class="muted"></p>
+      <p class="muted">Passwords are encrypted using macOS Keychain or Windows DPAPI. Use mqtts:// for encrypted transport. Save settings before starting.</p>
+      <p class="muted">Polling pauses and the dock handle closes when MQTT disconnects. It resumes only after the configured broker accepts a connection. This is broker-based gating, not a Wi-Fi SSID allowlist.</p>
+    </section>
+    <section>
+      <h2>Software updates</h2>
+      <p id="updateStatus" role="status">Updates are not checked yet.</p>
+      <p id="updateVerification" class="muted"></p>
+      <div class="actions">
+        <button id="checkUpdates" type="button">Check for stable updates</button>
+        <button id="downloadUpdate" type="button" hidden>Download and verify</button>
+        <button id="installUpdate" type="button" hidden>Install verified update</button>
+      </div>
+      <p class="muted">Updates are downloaded from this project’s GitHub releases. The signed manifest is verified with the project’s pinned Ed25519 public key, then the package SHA-256 is checked before installation. Windows starts the verified installer after confirmation; macOS opens the verified ZIP in Finder for manual installation.</p>
+    </section>
+    <section>
+      <h2>Connection diagnostics</h2>
+      <dl id="diagnostics" class="diagnostics">
+        <dt>Broker connection</dt><dd id="diagConnected">Not connected</dd>
+        <dt>Last telemetry published</dt><dd id="diagPublished">Never</dd>
+        <dt>Last message from broker</dt><dd id="diagReceived">Never</dd>
+        <dt>Dock connection</dt><dd id="diagDock">Unknown</dd>
+      </dl>
+      <p class="muted">If this laptop sleeps or drops off the network, the broker publishes its last will (<code>offline</code> on the <code>/bridge</code> topic) so Home Assistant shows the laptop as disconnected.</p>
+    </section>
+    <section>
+      <h2>Telemetry <small id="timestamp">No snapshot yet</small></h2>
+      <div id="summary" class="summary"></div>
+      <details><summary>Full JSON snapshot</summary><pre id="telemetry">No telemetry yet. Configure your broker and start the bridge.</pre></details>
+      <p class="muted">Retained state is stale when the bridge is offline. No dock settings or firmware are changed.</p>
+    </section>
+  </main>
+</body>
+</html>
