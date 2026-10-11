@@ -163,6 +163,9 @@ opt-in and prereleases are never installed.
 Existing installs must be manually upgraded once to a release containing the
 updater and its pinned public key; older app versions cannot verify this
 release format.
+GitHub replaces spaces with periods in uploaded package asset names. Signed
+manifests use those published names, and the updater also recognizes older
+manifests that contain the original spaced names.
 
 The desktop smoke test uses an isolated temporary settings profile and a
 loopback MQTT broker. It checks the real Electron window, IPC validation,

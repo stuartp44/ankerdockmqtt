@@ -27,7 +27,7 @@ for (const name of filenames) {
   const file = path.join(outputDirectory, name);
   const hash = createHash("sha256");
   for await (const chunk of createReadStream(file)) hash.update(chunk);
-  assets.push({ name, size: (await stat(file)).size, sha256: hash.digest("hex") });
+  assets.push({ name: name.replaceAll(" ", "."), size: (await stat(file)).size, sha256: hash.digest("hex") });
 }
 
 const manifest = Buffer.from(`${JSON.stringify({ schemaVersion: 1, tag: releaseTag, assets }, null, 2)}\n`);

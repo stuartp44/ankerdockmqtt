@@ -39,12 +39,18 @@ test("release manifest signature and expected tag are verified", () => {
 
 test("platform package selection is explicit and rejects unsupported targets", () => {
   const assets = [
-    { name: "Dock MQTT Setup 1.2.0.exe" },
-    { name: "Dock MQTT-1.2.0-mac.zip" },
-    { name: "Dock MQTT-1.2.0-arm64-mac.zip" },
+    { name: "Dock.MQTT.Setup.1.2.0.exe" },
+    { name: "Dock.MQTT-1.2.0-mac.zip" },
+    { name: "Dock.MQTT-1.2.0-arm64-mac.zip" },
   ];
-  assert.equal(selectPlatformAsset(assets, "1.2.0", "win32", "x64").name, "Dock MQTT Setup 1.2.0.exe");
-  assert.equal(selectPlatformAsset(assets, "1.2.0", "darwin", "arm64").name, "Dock MQTT-1.2.0-arm64-mac.zip");
+  assert.equal(selectPlatformAsset(assets, "1.2.0", "win32", "x64").name, "Dock.MQTT.Setup.1.2.0.exe");
+  assert.equal(selectPlatformAsset(assets, "1.2.0", "darwin", "arm64").name, "Dock.MQTT-1.2.0-arm64-mac.zip");
+  assert.equal(selectPlatformAsset(
+    [{ name: "Dock MQTT-1.2.0-arm64-mac.zip" }],
+    "1.2.0",
+    "darwin",
+    "arm64",
+  ).name, "Dock MQTT-1.2.0-arm64-mac.zip");
   assert.throws(() => selectPlatformAsset(assets, "1.2.0", "linux", "x64"), /not supported/);
 });
 
@@ -64,7 +70,7 @@ test("stable update lookup authenticates the manifest and chooses the current pl
     assets: [
       releaseAsset("v1.2.0", "update-manifest.json", manifest.bytes.length),
       releaseAsset("v1.2.0", "update-manifest.json.sig", manifest.signature.length),
-      releaseAsset("v1.2.0", packageName, payload.length),
+      releaseAsset("v1.2.0", packageName.replaceAll(" ", "."), payload.length),
     ],
   };
   const fetchImpl = async url => {
@@ -85,6 +91,7 @@ test("stable update lookup authenticates the manifest and chooses the current pl
   assert.equal(result.available, true);
   assert.equal(result.version, "1.2.0");
   assert.equal(result.asset.name, packageName);
+  assert.equal(result.asset.url.endsWith(encodeURIComponent(packageName.replaceAll(" ", "."))), true);
   assert.equal((await checkForStableUpdate({
     currentVersion: "1.2.0",
     platform: "win32",
