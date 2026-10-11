@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/stuartp44/ankerdockmqtt/compare/v0.3.0...v0.3.1) (2026-10-11)
+
+
+### Bug Fixes
+
+* create releases after build artifacts ([171ce2b](https://github.com/stuartp44/ankerdockmqtt/commit/171ce2bcb1bbaad3cbd3bcabd6d34a6a1c4493e4))
+
 ## [0.3.0](https://github.com/stuartp44/ankerdockmqtt/compare/v0.2.2...v0.3.0) (2026-10-11)
 
 
