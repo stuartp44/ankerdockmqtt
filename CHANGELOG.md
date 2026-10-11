@@ -10,7 +10,6 @@
 
 ### Bug Fixes
 
-* align updater with GitHub release asset names ([3c8f72d](https://github.com/stuartp44/ankerdockmqtt/commit/3c8f72df6bd664ed942cbd832801dc499f24fb82))
 * align updater with GitHub release asset names ([7dee192](https://github.com/stuartp44/ankerdockmqtt/commit/7dee19238b7585b20a1285efa2ac66f3b6b4b4a8))
 * build draft releases from release commit ([dac92d6](https://github.com/stuartp44/ankerdockmqtt/commit/dac92d6b51ce2c3c81536b48db9b23e4eff1c8d1))
 * create releases after build artifacts ([171ce2b](https://github.com/stuartp44/ankerdockmqtt/commit/171ce2bcb1bbaad3cbd3bcabd6d34a6a1c4493e4))
