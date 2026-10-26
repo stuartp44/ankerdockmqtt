@@ -50,6 +50,7 @@ export async function runBridge({
   let state = { status: "paused", snapshot: null, error: null, dock: null, mqtt: { ...timing } };
   const update = patch => {
     state = { ...state, ...patch, mqtt: { ...timing } };
+    if (state.status !== "online") state.snapshot = null;
     onState(state);
   };
   const client = connect(env, topic, error => {

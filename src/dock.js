@@ -44,11 +44,13 @@ export class Dock {
     this.pending = null;
     this.failure = null;
     this.closed = false;
-    device.on("data", report => this.receive(report));
-    device.on("error", error => {
+    this.onData = report => this.receive(report);
+    this.onError = error => {
       this.failure = error;
       this.pending?.reject(error);
-    });
+    };
+    device.on("data", this.onData);
+    device.on("error", this.onError);
   }
 
   static async open(serial) {
@@ -141,6 +143,8 @@ export class Dock {
     if (this.closed) return;
     this.closed = true;
     this.pending?.reject(new Error("Dock connection closed"));
+    this.device.removeListener("data", this.onData);
+    this.device.removeListener("error", this.onError);
     await this.device.close();
   }
 }

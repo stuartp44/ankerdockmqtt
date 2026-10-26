@@ -94,6 +94,7 @@ test("last will reports the laptop offline and timings track broker traffic", as
     },
   });
   const final = states.at(-1);
+  assert.equal(final.snapshot, null);
   assert.ok(final.mqtt.connectedAt);
   assert.ok(final.mqtt.lastPublishedAt);
   assert.ok(final.mqtt.lastReceivedAt, "packet receipt should be recorded");
@@ -151,6 +152,46 @@ test("USB failure is surfaced, marks offline and closes the failed dock", async 
   assert.equal(client.ended, true);
 });
 
+test("dock failures discard a previously successful snapshot", { timeout: 3000 }, async () => {
+  for (const [message, status] of [
+    ["could not read from HID device", "disconnected"],
+    ["device already open", "busy"],
+    ["Timed out reading port 0x1", "error"],
+  ]) {
+    const client = fakeBroker();
+    const controller = new AbortController();
+    const snapshot = { timestamp: "2026-01-01T12:00:00Z", ports: {} };
+    let reads = 0;
+    let sawFailure = false;
+    await runBridge({
+      env, signal: controller.signal, connect: () => client,
+      openDock: async () => ({
+        snapshot: async () => {
+          if (++reads === 1) return snapshot;
+          throw new Error(message);
+        },
+        close: async () => {},
+      }),
+      onState: state => {
+        if (state.status === "online") {
+          assert.equal(state.snapshot, snapshot);
+          setImmediate(() => client.emit("message", "homeassistant/status", Buffer.from("online")));
+        }
+        if (state.status === status) {
+          sawFailure = true;
+          assert.equal(state.snapshot, null);
+          controller.abort();
+        }
+        if (state.status === "stopped") assert.equal(state.snapshot, null);
+      },
+    });
+    assert.equal(sawFailure, true);
+    assert.equal(reads, 2);
+    assert.equal(client.listenerCount("message"), 0);
+    assert.equal(client.ended, true);
+  }
+});
+
 test("MQTT cleanup still runs if HID close fails", async () => {
   const client = fakeBroker();
   const controller = new AbortController();
@@ -203,7 +244,9 @@ test("losing broker closes USB and pauses; reconnect reopens and republishes dis
       return { snapshot: async () => snapshot, close: async () => { closes++; } };
     },
     onState: state => {
+      if (state.status !== "online") assert.equal(state.snapshot, null);
       if (state.status === "online") {
+        assert.equal(state.snapshot, snapshot);
         onlineCount++;
         if (onlineCount === 1) firstOnline();
         else controller.abort();

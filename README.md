@@ -37,7 +37,12 @@ runtime; users do not need to install Node.js.
   window says so. Turn the option off in the app to remove the login item.
 
 The window displays connection/error status, charging power, host-link status,
-Ethernet status, and the complete timestamped JSON snapshot. Settings persist
+Ethernet status, and the complete timestamped JSON snapshot.
+Live telemetry cards and JSON clear when the dock disconnects or the bridge is
+paused, stopped, or in error, and return after a fresh successful reading.
+MQTT retained telemetry is unchanged and is marked unavailable while offline.
+
+Settings persist
 in Electron's per-user application data directory. Passwords are encrypted
 using Electron safeStorage (macOS Keychain / Windows DPAPI), are never returned
 to the renderer, and are not saved if OS encryption is unavailable. Leave the

@@ -89,6 +89,26 @@ test("concurrent queries and use after close are rejected", async () => {
   await assert.rejects(dock.query(PORTS.host), /closed/);
 });
 
+test("removes HID listeners before closing the native handle", async () => {
+  const device = new FakeHid();
+  let resumes = 0;
+  device.on("newListener", eventName => {
+    if (eventName === "data") {
+      process.nextTick(() => {
+        if (device.listenerCount("data") === 0) return;
+        resumes++;
+        if (device.closed) throw new Error("device has been closed");
+      });
+    }
+  });
+  const dock = new Dock(device, {});
+  await dock.close();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(resumes, 0);
+  assert.equal(device.listenerCount("data"), 0);
+  assert.equal(device.listenerCount("error"), 0);
+});
+
 test("snapshot includes every port, correct units and USB identity without firmware assumptions", async () => {
   const device = new FakeHid((report, self) => {
     const port = report[1];

@@ -38,6 +38,27 @@ try {
   page.on("pageerror", error => errors.push(error.message));
   await page.waitForFunction(() => document.querySelector("#start")?.disabled === false);
   assert.equal(await page.title(), "Dock MQTT");
+  const syntheticSnapshot = {
+    timestamp: "2026-01-01T12:00:00Z",
+    ports: {
+      host: { power_w: 25.9 },
+      upstream: { link: "SS+" },
+      ethernet: { max_bandwidth_mbps: 1000 },
+    },
+  };
+  for (const status of ["paused", "disconnected", "busy", "error", "stopping", "stopped", "reading"]) {
+    await page.evaluate(snapshot => render({ status: "online", snapshot }), syntheticSnapshot);
+    assert.equal(await page.locator("#summary .metric").count(), 3);
+    assert.match(await page.locator("#summary").textContent(), /25.9 W/);
+    await page.evaluate(({ status, snapshot }) => render({ status, snapshot }), { status, snapshot: syntheticSnapshot });
+    assert.equal(await page.locator("#summary .metric").count(), 0);
+    assert.equal(await page.locator("#timestamp").textContent(), "No live telemetry");
+    assert.match(await page.locator("#telemetry").textContent(), /^No live telemetry/);
+  }
+  await page.evaluate(snapshot => render({ status: "online", snapshot }), syntheticSnapshot);
+  await page.evaluate(() => render({ status: "stopped", snapshot: null }));
+  assert.equal(await page.locator("#summary .metric").count(), 0);
+  console.log("Telemetry clears outside online state and fresh readings restore the cards");
   await page.click("#start");
   await page.waitForFunction(() => !document.querySelector("#error").hidden);
   assert.match(await page.locator("#error").innerText(), /MQTT_URL/);

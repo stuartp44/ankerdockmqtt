@@ -77,7 +77,13 @@ function render(state) {
   error(state.error);
   controls();
   renderUpdate(state.update);
-  if (!state.snapshot) return;
+  const summary = document.querySelector("#summary");
+  summary.replaceChildren();
+  if (state.status !== "online" || !state.snapshot) {
+    document.querySelector("#timestamp").textContent = "No live telemetry";
+    document.querySelector("#telemetry").textContent = "No live telemetry. Readings appear when the bridge is online and the dock is connected.";
+    return;
+  }
   document.querySelector("#timestamp").textContent = `Last reading: ${new Date(state.snapshot.timestamp).toLocaleString()} (${state.status})`;
   document.querySelector("#telemetry").textContent = JSON.stringify(state.snapshot, null, 2);
   const ports = state.snapshot.ports;
@@ -86,8 +92,6 @@ function render(state) {
     ["Host USB link", ports.upstream.link],
     ["Ethernet link", ethernetLink(ports.ethernet.max_bandwidth_mbps)],
   ];
-  const summary = document.querySelector("#summary");
-  summary.replaceChildren();
   for (const [label, value] of metrics) {
     const card = document.createElement("div");
     card.className = "metric";

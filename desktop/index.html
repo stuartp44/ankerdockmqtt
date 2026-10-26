@@ -71,7 +71,7 @@
       <h2>Telemetry <small id="timestamp">No snapshot yet</small></h2>
       <div id="summary" class="summary"></div>
       <details><summary>Full JSON snapshot</summary><pre id="telemetry">No telemetry yet. Configure your broker and start the bridge.</pre></details>
-      <p class="muted">Retained state is stale when the bridge is offline. No dock settings or firmware are changed.</p>
+      <p class="muted">Live readings clear when the dock disconnects or the bridge is paused, stopped, or in error. MQTT retained state may contain the last reading, marked unavailable while offline. No dock settings or firmware are changed.</p>
     </section>
   </main>
 </body>
